@@ -4,12 +4,52 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import type { Product } from "@/types/product";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   product: Product;
+  onViewDetails?: () => void;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, onViewDetails }: ProductCardProps) {
+  const [isAddingToCart, setIsAddingToCart] = React.useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!session) {
+      router.push('/auth/signin');
+      return;
+    }
+
+    setIsAddingToCart(true);
+    try {
+      const res = await fetch('/api/cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          quantity: 1,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to add to cart');
+      }
+
+      alert('Added to cart successfully!');
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Failed to add item to cart. Please try again.');
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -18,6 +58,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       viewport={{ once: true }}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
       className="card overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow duration-300"
+      onClick={onViewDetails}
     >
       <div className="relative h-48 w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
         <Image
@@ -57,15 +98,33 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.description}
         </p>
 
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-3">
           <span className="text-lg font-bold text-primary-700 dark:text-primary-300">
             ${product.price.toFixed(2)}
           </span>
+          <div className="text-sm px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300">
+            {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
+          </div>
+        </div>
 
+        <div className="flex gap-2">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="btn-primary text-sm inline-block"
+            className="btn-secondary text-sm flex-1"
+            onClick={handleAddToCart}
+            disabled={product.stock <= 0 || isAddingToCart}
+          >
+            {isAddingToCart ? 'Adding...' : 'Add to Cart'}
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="btn-primary text-sm flex-1"
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewDetails?.();
+            }}
           >
             View Details
           </motion.button>

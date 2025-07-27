@@ -4,15 +4,15 @@ import { categories } from "@/data/products";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 mt-16">
+    <footer className="bg-[#0284c7] border-t border-blue-300 mt-16">
       <div className="container-custom py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="col-span-1 md:col-span-1">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-lg font-bold text-white mb-4">
               TissuePro Tech ID
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">
+            <p className="text-white mb-4 text-sm">
               Advancing laboratory science with innovative, reliable, and
               sustainable products.
             </p>
@@ -21,7 +21,7 @@ const Footer = () => {
                 href="https://x.com/tissueprotech"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+                className="text-white hover:text-blue-200"
               >
                 <svg
                   className="w-5 h-5"
@@ -36,7 +36,7 @@ const Footer = () => {
                 href="https://facebook.com/tissue.protech"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+                className="text-white hover:text-blue-200"
               >
                 <svg
                   className="w-5 h-5"
@@ -56,14 +56,14 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-lg font-bold text-white mb-4">
               Quick Links
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
                   href="/"
-                  className="text-gray-600 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+                  className="text-white hover:text-blue-200"
                 >
                   Home
                 </Link>
@@ -71,7 +71,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/#products"
-                  className="text-gray-600 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+                  className="text-white hover:text-blue-200"
                 >
                   Products
                 </Link>
@@ -79,7 +79,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/#about"
-                  className="text-gray-600 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+                  className="text-white hover:text-blue-200"
                 >
                   About Us
                 </Link>
@@ -87,7 +87,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/#contact"
-                  className="text-gray-600 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+                  className="text-white hover:text-blue-200"
                 >
                   Contact
                 </Link>
@@ -95,7 +95,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/cart"
-                  className="text-gray-600 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+                  className="text-white hover:text-blue-200"
                 >
                   Cart
                 </Link>
@@ -103,7 +103,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/orders"
-                  className="text-gray-600 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+                  className="text-white hover:text-blue-200"
                 >
                   My Orders
                 </Link>
@@ -113,7 +113,7 @@ const Footer = () => {
 
           {/* Products */}
           <div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-lg font-bold text-white mb-4">
               Categories
             </h3>
             <ul className="space-y-2 text-sm">
@@ -121,7 +121,7 @@ const Footer = () => {
                 <li key={category.id}>
                   <Link
                     href={`/categories/${category.id}`}
-                    className="text-gray-600 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+                    className="text-white hover:text-blue-200"
                   >
                     {category.name}
                   </Link>
@@ -132,14 +132,14 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-lg font-bold text-white mb-4">
               Contact Us
             </h3>
             <ul className="space-y-2 text-sm">
               <li className="flex items-start">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2 mt-0.5"
+                  className="h-5 w-5 text-white mr-2 mt-0.5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -153,7 +153,7 @@ const Footer = () => {
                 </svg>
                 <a
                   href="mailto:customerservice@tissueprotech.com"
-                  className="text-gray-600 pt-0.5 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+                  className="text-white pt-0.5 hover:text-blue-200"
                 >
                   customerservice@tissueprotech.com
                 </a>
@@ -161,7 +161,7 @@ const Footer = () => {
               <li className="flex items-start">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2 mt-0.5"
+                  className="h-5 w-5 text-white mr-2 mt-0.5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -175,7 +175,7 @@ const Footer = () => {
                 </svg>
                 <a
                   href="tel:(352) 246-2080"
-                  className="text-gray-600 pt-0.5 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+                  className="text-white pt-0.5 hover:text-blue-200"
                 >
                   (352) 246-2080
                 </a>
@@ -183,7 +183,7 @@ const Footer = () => {
               <li className="flex items-start">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2 mt-0.5"
+                  className="h-5 w-5 text-white mr-2 mt-0.5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -201,7 +201,7 @@ const Footer = () => {
                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
-                <span className="text-gray-600 dark:text-gray-400 pt-0.5">
+                <span className="text-white pt-0.5">
                   Florida, United States of America
                 </span>
               </li>
@@ -209,27 +209,27 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-200 dark:border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 md:mb-0">
+        <div className="border-t border-blue-300 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-sm text-white mb-4 md:mb-0">
             © {new Date().getFullYear()} TissuePro Teknologi Indonesia. All
             rights reserved.
           </p>
           <div className="flex space-x-6">
             <Link
               href="/privacy"
-              className="text-sm text-gray-500 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+              className="text-sm text-white hover:text-blue-200"
             >
               Privacy Policy
             </Link>
             <Link
               href="/terms"
-              className="text-sm text-gray-500 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+              className="text-sm text-white hover:text-blue-200"
             >
               Terms of Service
             </Link>
             <Link
               href="/cookies"
-              className="text-sm text-gray-500 hover:text-primary-500 dark:text-gray-400 dark:hover:text-primary-400"
+              className="text-sm text-white hover:text-blue-200"
             >
               Cookie Policy
             </Link>

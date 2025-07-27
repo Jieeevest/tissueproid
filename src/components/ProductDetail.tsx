@@ -4,6 +4,8 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Product } from "@/types/product";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface ProductDetailProps {
   product: Product;
@@ -12,6 +14,10 @@ interface ProductDetailProps {
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }) => {
   const [quantity, setQuantity] = React.useState(1);
+  const [isAddingToCart, setIsAddingToCart] = React.useState(false);
+  const [isBuying, setIsBuying] = React.useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
 
   const decreaseQuantity = () => {
     if (quantity > 1) {
@@ -22,6 +28,72 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }) => {
   const increaseQuantity = () => {
     if (quantity < product.stock) {
       setQuantity(quantity + 1);
+    }
+  };
+
+  const handleAddToCart = async () => {
+    if (!session) {
+      router.push('/auth/signin');
+      return;
+    }
+
+    setIsAddingToCart(true);
+    try {
+      const res = await fetch('/api/cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          quantity: quantity,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to add to cart');
+      }
+
+      alert(`Added ${quantity} item(s) to cart successfully!`);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Failed to add item to cart. Please try again.');
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (!session) {
+      router.push('/auth/signin');
+      return;
+    }
+
+    setIsBuying(true);
+    try {
+      // First add to cart
+      const res = await fetch('/api/cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          quantity: quantity,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to add to cart');
+      }
+
+      // Then redirect to checkout
+      router.push('/checkout');
+    } catch (error) {
+      console.error('Error during buy now:', error);
+      alert('Failed to process purchase. Please try again.');
+    } finally {
+      setIsBuying(false);
     }
   };
   return (
@@ -242,17 +314,17 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }) => {
                 {/* Action Buttons */}
                 <button
                   className="btn-secondary whitespace-nowrap"
-                  onClick={() => alert(`Added ${quantity} item(s) to cart`)}
-                  disabled={product.stock <= 0}
+                  onClick={handleAddToCart}
+                  disabled={product.stock <= 0 || isAddingToCart}
                 >
-                  Add to Cart
+                  {isAddingToCart ? 'Adding...' : 'Add to Cart'}
                 </button>
                 <button
                   className="btn-primary whitespace-nowrap"
-                  onClick={() => alert(`Buying ${quantity} item(s) now`)}
-                  disabled={product.stock <= 0}
+                  onClick={handleBuyNow}
+                  disabled={product.stock <= 0 || isBuying}
                 >
-                  Buy Now
+                  {isBuying ? 'Processing...' : 'Buy Now'}
                 </button>
               </div>
             </div>

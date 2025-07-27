@@ -158,9 +158,11 @@ const ProductListing = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredProducts.map((product) => (
-                  <div key={product.id} onClick={() => handleProductClick(product.id)}>
-                    <ProductCard product={product} />
-                  </div>
+                  <ProductCard 
+                    key={product.id} 
+                    product={product} 
+                    onViewDetails={() => handleProductClick(product.id)}
+                  />
                 ))}
               </div>
             )}

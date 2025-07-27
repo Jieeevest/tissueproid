@@ -201,12 +201,12 @@ const AboutUsRevamped = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="bg-primary-50 dark:bg-gray-800/50 p-8 md:p-12 rounded-2xl text-center"
+          className="bg-primary-500  dark:bg-gray-800/50 p-8 md:p-12 rounded-2xl text-center"
         >
-          <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">
+          <h3 className="text-2xl md:text-3xl font-bold text-white dark:text-white mb-6">
             Our Impact & Expansion
           </h3>
-          <p className="text-gray-700 dark:text-gray-300 max-w-3xl mx-auto mb-8">
+          <p className="text-white dark:text-gray-300 max-w-3xl mx-auto mb-8">
             TissuePro products have gained tremendous reputation in the USA and
             are used in high profile laboratories and institutions. We&apos;re
             now expanding our services to the overseas market, bringing our
@@ -214,34 +214,34 @@ const AboutUsRevamped = () => {
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+              <div className="text-3xl md:text-4xl font-bold text-white mb-2">
                 45+
               </div>
-              <div className="text-gray-600 dark:text-gray-400 text-sm">
+              <div className="text-white text-sm">
                 Countries
               </div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+              <div className="text-3xl md:text-4xl font-bold text-white mb-2">
                 2000+
               </div>
-              <div className="text-gray-600 dark:text-gray-400 text-sm">
+              <div className="text-white text-sm">
                 Laboratories
               </div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+              <div className="text-3xl md:text-4xl font-bold text-white mb-2">
                 150+
               </div>
-              <div className="text-gray-600 dark:text-gray-400 text-sm">
+              <div className="text-white text-sm">
                 Products
               </div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+              <div className="text-3xl md:text-4xl font-bold text-white mb-2">
                 15+
               </div>
-              <div className="text-gray-600 dark:text-gray-400 text-sm">
+              <div className="text-white text-sm">
                 Years Experience
               </div>
             </div>
