@@ -10,6 +10,15 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=4300
+      # Add your environment variables here or use env_file
+      # - DATABASE_URL=${DATABASE_URL}
+      # - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      # - NEXTAUTH_URL=${NEXTAUTH_URL}
+    env_file:
+      - .env
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./.env.local:/app/.env.local:ro
     restart: unless-stopped
     container_name: tissueproid-container
     networks:

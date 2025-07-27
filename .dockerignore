@@ -9,9 +9,9 @@ yarn-error.log*
 out
 build
 
-# Environment variables
-.env
-.env.local
+# Environment variables (commented out to allow .env files in production)
+# .env
+# .env.local
 .env.development.local
 .env.test.local
 .env.production.local
