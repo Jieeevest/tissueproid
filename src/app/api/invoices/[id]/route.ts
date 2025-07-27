@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth/auth";
 import prisma from "@/lib/prisma/client";
+import { Prisma } from "@prisma/client";
 
 // GET /api/invoices/[id] - Get invoice details
 export async function GET(
@@ -98,25 +99,27 @@ export async function PUT(
     }
 
     // Update invoice and order in a transaction
-    const updatedInvoice = await prisma.$transaction(async (prisma) => {
-      // Update invoice
-      const updatedInvoice = await prisma.invoice.update({
-        where: { id },
-        data: {
-          paidDate: new Date(),
-        },
-      });
+    const updatedInvoice = await prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
+        // Update invoice
+        const updatedInvoice = await tx.invoice.update({
+          where: { id },
+          data: {
+            paidDate: new Date(),
+          },
+        });
 
-      // Update order payment status
-      await prisma.order.update({
-        where: { id: invoice.orderId },
-        data: {
-          paymentStatus: "PAID",
-        },
-      });
+        // Update order payment status
+        await tx.order.update({
+          where: { id: invoice.orderId },
+          data: {
+            paymentStatus: "PAID",
+          },
+        });
 
-      return updatedInvoice;
-    });
+        return updatedInvoice;
+      }
+    );
 
     return NextResponse.json(updatedInvoice);
   } catch (error) {
