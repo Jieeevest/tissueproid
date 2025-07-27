@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  tissueproid-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4300:4300"
+    environment:
+      - NODE_ENV=production
+      - PORT=4300
+    restart: unless-stopped
+    container_name: tissueproid-container
+    networks:
+      - tissueproid-network
+
+networks:
+  tissueproid-network:
+    driver: bridge
