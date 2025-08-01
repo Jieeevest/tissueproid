@@ -15,8 +15,8 @@ const CartSummary: React.FC<CartSummaryProps> = ({ items, onCheckout }) => {
     return sum + (item.product?.price || 0) * item.quantity;
   }, 0);
 
-  // Calculate shipping cost (example: free shipping above $33)
-  const shippingCost = subtotal > 500000 ? 0 : 20000;
+  // Calculate shipping cost (free shipping above $100)
+  const shippingCost = subtotal > 100 ? 0 : 10;
 
   // Calculate total
   const total = subtotal + shippingCost;
@@ -32,20 +32,20 @@ const CartSummary: React.FC<CartSummaryProps> = ({ items, onCheckout }) => {
       <div className="space-y-3 mb-6">
         <div className="flex justify-between">
           <span className="text-gray-600 dark:text-gray-300">Subtotal ({items.length} {items.length === 1 ? 'item' : 'items'})</span>
-          <span className="text-gray-900 dark:text-white font-medium">${(subtotal/15000).toFixed(2)}</span>
+          <span className="text-gray-900 dark:text-white font-medium">${subtotal.toFixed(2)}</span>
         </div>
         
         <div className="flex justify-between">
           <span className="text-gray-600 dark:text-gray-300">Shipping</span>
           <span className="text-gray-900 dark:text-white font-medium">
-            {shippingCost === 0 ? 'Free' : `$${(shippingCost/15000).toFixed(2)}`}
+            {shippingCost === 0 ? 'Free' : `$${shippingCost.toFixed(2)}`}
           </span>
         </div>
         
         <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-3">
           <div className="flex justify-between">
             <span className="text-gray-900 dark:text-white font-semibold">Total</span>
-            <span className="text-primary-600 font-bold text-xl">${(total/15000).toFixed(2)}</span>
+            <span className="text-primary-600 font-bold text-xl">${total.toFixed(2)}</span>
           </div>
         </div>
       </div>

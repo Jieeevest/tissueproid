@@ -1,8 +1,7 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { signOut } from 'next-auth/react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function AdminSidebar() {
   const pathname = usePathname();
@@ -14,7 +13,9 @@ export default function AdminSidebar() {
   return (
     <aside className="w-64 bg-white dark:bg-gray-800 shadow-md">
       <div className="p-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">TissueProID</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+          TissueProID
+        </h2>
         <p className="text-sm text-gray-600 dark:text-gray-300">Admin Panel</p>
       </div>
       <nav className="mt-6">
@@ -22,7 +23,14 @@ export default function AdminSidebar() {
           <li>
             <Link
               href="/admin"
-              className={`flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${isActive('/admin') && !isActive('/admin/products') && !isActive('/admin/categories') && !isActive('/admin/users') ? 'bg-gray-100 dark:bg-gray-700 border-l-4 border-primary-500' : ''}`}
+              className={`flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                isActive("/admin") &&
+                !isActive("/admin/products") &&
+                !isActive("/admin/categories") &&
+                !isActive("/admin/users")
+                  ? "bg-gray-100 dark:bg-gray-700 border-l-4 border-primary-500"
+                  : ""
+              }`}
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -44,7 +52,11 @@ export default function AdminSidebar() {
           <li>
             <Link
               href="/admin/products"
-              className={`flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${isActive('/admin/products') ? 'bg-gray-100 dark:bg-gray-700 border-l-4 border-primary-500' : ''}`}
+              className={`flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                isActive("/admin/products")
+                  ? "bg-gray-100 dark:bg-gray-700 border-l-4 border-primary-500"
+                  : ""
+              }`}
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -66,7 +78,11 @@ export default function AdminSidebar() {
           <li>
             <Link
               href="/admin/categories"
-              className={`flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${isActive('/admin/categories') ? 'bg-gray-100 dark:bg-gray-700 border-l-4 border-primary-500' : ''}`}
+              className={`flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                isActive("/admin/categories")
+                  ? "bg-gray-100 dark:bg-gray-700 border-l-4 border-primary-500"
+                  : ""
+              }`}
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -87,8 +103,38 @@ export default function AdminSidebar() {
           </li>
           <li>
             <Link
+              href="/admin/orders"
+              className={`flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                isActive("/admin/orders")
+                  ? "bg-gray-100 dark:bg-gray-700 border-l-4 border-primary-500"
+                  : ""
+              }`}
+            >
+              <svg
+                className="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                ></path>
+              </svg>
+              Orders
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/admin/users"
-              className={`flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${isActive('/admin/users') ? 'bg-gray-100 dark:bg-gray-700 border-l-4 border-primary-500' : ''}`}
+              className={`flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                isActive("/admin/users")
+                  ? "bg-gray-100 dark:bg-gray-700 border-l-4 border-primary-500"
+                  : ""
+              }`}
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -106,28 +152,6 @@ export default function AdminSidebar() {
               </svg>
               Users
             </Link>
-          </li>
-          <li className="mt-6">
-            <button
-              onClick={() => signOut({ callbackUrl: '/' })}
-              className="flex w-full items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <svg
-                className="w-5 h-5 mr-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                ></path>
-              </svg>
-              Logout
-            </button>
           </li>
         </ul>
       </nav>

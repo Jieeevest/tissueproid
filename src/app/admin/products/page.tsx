@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect, ChangeEvent } from "react";
-import Link from "next/link";
-import { FiSearch, FiPlus, FiEdit2, FiTrash2, FiFilter, FiPackage, FiSave } from "react-icons/fi";
+import { FiSearch, FiPlus, FiEdit2, FiTrash2, FiFilter, FiPackage, FiSave, FiUpload, FiX } from "react-icons/fi";
 import Modal from "@/components/admin/Modal";
 
 interface Product {
@@ -31,6 +30,7 @@ export default function ProductsPage() {
   const [filterFeatured, setFilterFeatured] = useState<string>("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
@@ -46,6 +46,20 @@ export default function ProductsPage() {
     rating: "0",
     stock: "0",
   });
+
+  const [addFormData, setAddFormData] = useState({
+    name: "",
+    description: "",
+    price: "",
+    image: "",
+    categoryId: "",
+    featured: false,
+    rating: "0",
+    stock: "0",
+  });
+
+  const [editImagePreview, setEditImagePreview] = useState<string>("");
+  const [addImagePreview, setAddImagePreview] = useState<string>("");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -134,7 +148,23 @@ export default function ProductsPage() {
       rating: product.rating.toString(),
       stock: product.stock.toString(),
     });
+    setEditImagePreview(product.image);
     setIsEditModalOpen(true);
+  };
+
+  const openAddModal = () => {
+    setAddFormData({
+      name: "",
+      description: "",
+      price: "",
+      image: "",
+      categoryId: categories.length > 0 ? categories[0].id : "",
+      featured: false,
+      rating: "0",
+      stock: "0",
+    });
+    setAddImagePreview("");
+    setIsAddModalOpen(true);
   };
   
   const handleDelete = async () => {
@@ -174,7 +204,98 @@ export default function ProductsPage() {
         type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
   };
+
+  const handleAddChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value, type } = e.target as HTMLInputElement;
+
+    setAddFormData((prev) => ({
+      ...prev,
+      [name]:
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+    }));
+  };
+
+  const handleEditImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditImagePreview(reader.result as string);
+        setEditFormData(prev => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAddImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAddImagePreview(reader.result as string);
+        setAddFormData(prev => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeEditImage = () => {
+    setEditImagePreview("");
+    setEditFormData(prev => ({ ...prev, image: "" }));
+  };
+
+  const removeAddImage = () => {
+    setAddImagePreview("");
+    setAddFormData(prev => ({ ...prev, image: "" }));
+  };
   
+  const handleAddSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    setIsSubmitting(true);
+    try {
+      // Convert string values to appropriate types
+      const productData = {
+        ...addFormData,
+        price: parseFloat(addFormData.price),
+        rating: parseFloat(addFormData.rating),
+        stock: parseInt(addFormData.stock, 10),
+      };
+
+      const res = await fetch("/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(productData),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to create product");
+      }
+      
+      const newProduct = await res.json();
+      
+      // Add product to state
+      const updatedProducts = [...products, newProduct];
+      setProducts(updatedProducts);
+      setFilteredProducts([...filteredProducts, newProduct]);
+      
+      setIsAddModalOpen(false);
+    } catch (err: Error | unknown) {
+      console.error("Error creating product:", err);
+      const errorMessage = err instanceof Error ? err.message : "Failed to create product. Please try again.";
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentProduct) return;
@@ -271,12 +392,12 @@ export default function ProductsPage() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
           <FiPackage className="mr-2" /> Products
         </h1>
-        <Link
-          href="/admin/products/new"
+        <button
+          onClick={openAddModal}
           className="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition-colors duration-200 flex items-center"
         >
           <FiPlus className="mr-1" /> Add New Product
-        </Link>
+        </button>
       </div>
       
       {/* Search and Filter Bar */}
@@ -349,12 +470,12 @@ export default function ProductsPage() {
           <p className="text-gray-600 dark:text-gray-300 mb-4">
             No products found.
           </p>
-          <Link
-            href="/admin/products/new"
+          <button
+            onClick={openAddModal}
             className="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition-colors duration-200 flex items-center justify-center gap-2 mx-auto w-fit"
           >
             <FiPlus /> Add Your First Product
-          </Link>
+          </button>
         </div>
       ) : filteredProducts.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
@@ -508,154 +629,213 @@ export default function ProductsPage() {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         title="Edit Product"
-        maxWidth="max-w-2xl"
+        maxWidth="max-w-4xl"
       >
         <form onSubmit={handleEditSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="col-span-2">
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
-                Product Name *
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={editFormData.name}
-                onChange={handleEditChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-
-            <div className="col-span-2">
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
-                Description *
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                value={editFormData.description}
-                onChange={handleEditChange}
-                required
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="price"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
-                Price *
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-500 dark:text-gray-400">$</span>
+          <div className="space-y-6">
+            {/* Basic Information Section */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Basic Information</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="lg:col-span-2">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Product Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={editFormData.name}
+                    onChange={handleEditChange}
+                    required
+                    placeholder="Enter product name"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors"
+                  />
                 </div>
-                <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  value={editFormData.price}
-                  onChange={handleEditChange}
-                  required
-                  min="0"
-                  step="0.01"
-                  className="w-full pl-7 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-                />
+
+                <div className="lg:col-span-2">
+                  <label
+                    htmlFor="description"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Description *
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={editFormData.description}
+                    onChange={handleEditChange}
+                    required
+                    rows={4}
+                    placeholder="Enter detailed product description"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors resize-none"
+                  />
+                </div>
               </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="stock"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
-                Stock
-              </label>
-              <input
-                type="number"
-                id="stock"
-                name="stock"
-                value={editFormData.stock}
-                onChange={handleEditChange}
-                min="0"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-              />
+            {/* Pricing & Inventory Section */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Pricing & Inventory</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <label
+                    htmlFor="price"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Price *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <span className="text-gray-500 dark:text-gray-400 font-medium">$</span>
+                    </div>
+                    <input
+                      type="number"
+                      id="price"
+                      name="price"
+                      value={editFormData.price}
+                      onChange={handleEditChange}
+                      required
+                      min="0"
+                      step="0.01"
+                      placeholder="0.00"
+                      className="w-full pl-8 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="stock"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Stock Quantity
+                  </label>
+                  <input
+                    type="number"
+                    id="stock"
+                    name="stock"
+                    value={editFormData.stock}
+                    onChange={handleEditChange}
+                    min="0"
+                    placeholder="0"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="rating"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Rating (0-5)
+                  </label>
+                  <input
+                    type="number"
+                    id="rating"
+                    name="rating"
+                    value={editFormData.rating}
+                    onChange={handleEditChange}
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    placeholder="0.0"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="image"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
-                Image URL *
-              </label>
-              <input
-                type="text"
-                id="image"
-                name="image"
-                value={editFormData.image}
-                onChange={handleEditChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-              />
+            {/* Media & Category Section */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Media & Category</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Product Image *
+                  </label>
+                  <div className="space-y-4">
+                    {editImagePreview && (
+                      <div className="relative inline-block">
+                        <img
+                          src={editImagePreview}
+                          alt="Preview"
+                          className="w-40 h-40 object-cover rounded-lg border-2 border-gray-300 dark:border-gray-600 shadow-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={removeEditImage}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors shadow-lg"
+                        >
+                          <FiX className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                    <div className="space-y-3">
+                      <div>
+                        <input
+                          type="file"
+                          id="edit-image-upload"
+                          accept="image/*"
+                          onChange={handleEditImageChange}
+                          className="hidden"
+                        />
+                        <label
+                          htmlFor="edit-image-upload"
+                          className="w-full px-4 py-3 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border-2 border-dashed border-primary-300 dark:border-primary-600 rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/30 cursor-pointer flex items-center justify-center transition-colors"
+                        >
+                          <FiUpload className="mr-2" /> Choose Image File
+                        </label>
+                      </div>
+                      <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+                        or
+                      </div>
+                      <input
+                        type="text"
+                        name="image"
+                        value={editFormData.image}
+                        onChange={handleEditChange}
+                        placeholder="Enter image URL"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="categoryId"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Category *
+                  </label>
+                  <select
+                    id="categoryId"
+                    name="categoryId"
+                    value={editFormData.categoryId}
+                    onChange={handleEditChange}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors"
+                  >
+                    {categories.length === 0 && (
+                      <option value="">No categories available</option>
+                    )}
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="categoryId"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
-                Category *
-              </label>
-              <select
-                id="categoryId"
-                name="categoryId"
-                value={editFormData.categoryId}
-                onChange={handleEditChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-              >
-                {categories.length === 0 && (
-                  <option value="">No categories available</option>
-                )}
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label
-                htmlFor="rating"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
-                Rating
-              </label>
-              <input
-                type="number"
-                id="rating"
-                name="rating"
-                value={editFormData.rating}
-                onChange={handleEditChange}
-                min="0"
-                max="5"
-                step="0.1"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-
-            <div className="col-span-2">
+            {/* Additional Options */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Additional Options</h3>
               <div className="flex items-center">
                 <input
                   type="checkbox"
@@ -663,15 +843,18 @@ export default function ProductsPage() {
                   name="featured"
                   checked={editFormData.featured as boolean}
                   onChange={handleEditChange}
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  className="h-5 w-5 text-primary-600 focus:ring-primary-500 border-gray-300 rounded transition-colors"
                 />
                 <label
                   htmlFor="featured"
-                  className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+                  className="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
-                  Featured Product
+                  Mark as Featured Product
                 </label>
               </div>
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                Featured products will be highlighted on the homepage and in search results.
+              </p>
             </div>
           </div>
 
@@ -700,6 +883,272 @@ export default function ProductsPage() {
               ) : (
                 <>
                   <FiSave className="mr-2" /> Save Changes
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Add Product Modal */}
+      <Modal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        title="Add New Product"
+        maxWidth="max-w-4xl"
+      >
+        <form onSubmit={handleAddSubmit}>
+          <div className="space-y-6">
+            {/* Basic Information Section */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Basic Information</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="lg:col-span-2">
+                  <label
+                    htmlFor="add-name"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Product Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="add-name"
+                    name="name"
+                    value={addFormData.name}
+                    onChange={handleAddChange}
+                    required
+                    placeholder="Enter product name"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors"
+                  />
+                </div>
+
+                <div className="lg:col-span-2">
+                  <label
+                    htmlFor="add-description"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Description *
+                  </label>
+                  <textarea
+                    id="add-description"
+                    name="description"
+                    value={addFormData.description}
+                    onChange={handleAddChange}
+                    required
+                    rows={4}
+                    placeholder="Enter detailed product description"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors resize-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Pricing & Inventory Section */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Pricing & Inventory</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <label
+                    htmlFor="add-price"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Price *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <span className="text-gray-500 dark:text-gray-400 font-medium">$</span>
+                    </div>
+                    <input
+                      type="number"
+                      id="add-price"
+                      name="price"
+                      value={addFormData.price}
+                      onChange={handleAddChange}
+                      required
+                      min="0"
+                      step="0.01"
+                      placeholder="0.00"
+                      className="w-full pl-8 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="add-stock"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Stock Quantity
+                  </label>
+                  <input
+                    type="number"
+                    id="add-stock"
+                    name="stock"
+                    value={addFormData.stock}
+                    onChange={handleAddChange}
+                    min="0"
+                    placeholder="0"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="add-rating"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Rating (0-5)
+                  </label>
+                  <input
+                    type="number"
+                    id="add-rating"
+                    name="rating"
+                    value={addFormData.rating}
+                    onChange={handleAddChange}
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    placeholder="0.0"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Media & Category Section */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Media & Category</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Product Image *
+                  </label>
+                  <div className="space-y-4">
+                    {addImagePreview && (
+                      <div className="relative inline-block">
+                        <img
+                          src={addImagePreview}
+                          alt="Preview"
+                          className="w-40 h-40 object-cover rounded-lg border-2 border-gray-300 dark:border-gray-600 shadow-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={removeAddImage}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors shadow-lg"
+                        >
+                          <FiX className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                    <div className="space-y-3">
+                      <div>
+                        <input
+                          type="file"
+                          id="add-image-upload"
+                          accept="image/*"
+                          onChange={handleAddImageChange}
+                          className="hidden"
+                        />
+                        <label
+                          htmlFor="add-image-upload"
+                          className="w-full px-4 py-3 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border-2 border-dashed border-primary-300 dark:border-primary-600 rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/30 cursor-pointer flex items-center justify-center transition-colors"
+                        >
+                          <FiUpload className="mr-2" /> Choose Image File
+                        </label>
+                      </div>
+                      <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+                        or
+                      </div>
+                      <input
+                        type="text"
+                        name="image"
+                        value={addFormData.image}
+                        onChange={handleAddChange}
+                        placeholder="Enter image URL"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="add-categoryId"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Category *
+                  </label>
+                  <select
+                    id="add-categoryId"
+                    name="categoryId"
+                    value={addFormData.categoryId}
+                    onChange={handleAddChange}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors"
+                  >
+                    {categories.length === 0 && (
+                      <option value="">No categories available</option>
+                    )}
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Options */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Additional Options</h3>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="add-featured"
+                  name="featured"
+                  checked={addFormData.featured as boolean}
+                  onChange={handleAddChange}
+                  className="h-5 w-5 text-primary-600 focus:ring-primary-500 border-gray-300 rounded transition-colors"
+                />
+                <label
+                  htmlFor="add-featured"
+                  className="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Mark as Featured Product
+                </label>
+              </div>
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                Featured products will be highlighted on the homepage and in search results.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 flex items-center justify-end space-x-3">
+            <button
+              type="button"
+              onClick={() => setIsAddModalOpen(false)}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              disabled={isSubmitting}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+            >
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <FiPlus className="mr-2" /> Create Product
                 </>
               )}
             </button>

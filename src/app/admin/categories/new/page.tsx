@@ -66,6 +66,7 @@ export default function NewCategoryPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              placeholder="Enter category name"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
             />
           </div>

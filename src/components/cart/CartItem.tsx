@@ -47,7 +47,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove })
             {item.product.category?.name || 'Uncategorized'}
           </p>
           <p className="text-primary-600 font-medium">
-            ${(item.product.price/15000).toFixed(2)}
+            ${item.product.price.toFixed(2)}
           </p>
         </div>
       </div>
@@ -79,7 +79,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove })
 
         <div className="text-right md:min-w-[100px]">
           <p className="font-medium text-gray-900 dark:text-white">
-            ${(subtotal/15000).toFixed(2)}
+            ${subtotal.toFixed(2)}
           </p>
         </div>
 

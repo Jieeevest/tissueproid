@@ -425,6 +425,7 @@ export default function UsersPage() {
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
               required
+              placeholder="Enter user's full name"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
@@ -442,6 +443,7 @@ export default function UsersPage() {
               value={userEmail}
               onChange={(e) => setUserEmail(e.target.value)}
               required
+              placeholder="Enter user's email address"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
@@ -459,6 +461,7 @@ export default function UsersPage() {
               value={userPassword}
               onChange={(e) => setUserPassword(e.target.value)}
               required
+              placeholder="Enter password (min. 6 characters)"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
@@ -526,6 +529,7 @@ export default function UsersPage() {
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
               required
+              placeholder="Enter user's full name"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
@@ -543,6 +547,7 @@ export default function UsersPage() {
               value={userEmail}
               onChange={(e) => setUserEmail(e.target.value)}
               required
+              placeholder="Enter user's email address"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
             />
           </div>
@@ -559,6 +564,7 @@ export default function UsersPage() {
               id="edit-password"
               value={userPassword}
               onChange={(e) => setUserPassword(e.target.value)}
+              placeholder="Enter new password (leave blank to keep current)"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
             />
           </div>

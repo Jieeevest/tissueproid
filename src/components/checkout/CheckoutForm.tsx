@@ -60,6 +60,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSubmit, isSubmitting }) =
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
+              placeholder="Enter your full name"
               required
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
             />
@@ -75,6 +76,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSubmit, isSubmitting }) =
               name="email"
               value={formData.email}
               onChange={handleChange}
+              placeholder="your.email@example.com"
               required
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
             />
@@ -91,6 +93,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSubmit, isSubmitting }) =
             name="phone"
             value={formData.phone}
             onChange={handleChange}
+            placeholder="+62 812 3456 7890"
             required
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
           />
@@ -105,6 +108,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSubmit, isSubmitting }) =
             name="address"
             value={formData.address}
             onChange={handleChange}
+            placeholder="Enter your complete address (street, building number, etc.)"
             required
             rows={3}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
@@ -122,6 +126,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSubmit, isSubmitting }) =
               name="city"
               value={formData.city}
               onChange={handleChange}
+              placeholder="Jakarta"
               required
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
             />
@@ -137,6 +142,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSubmit, isSubmitting }) =
               name="postalCode"
               value={formData.postalCode}
               onChange={handleChange}
+              placeholder="12345"
               required
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
             />
