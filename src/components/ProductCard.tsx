@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import type { Product } from "@/types/product";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 interface ProductCardProps {
   product: Product;
@@ -42,10 +43,22 @@ export default function ProductCard({ product, onViewDetails }: ProductCardProps
         throw new Error('Failed to add to cart');
       }
 
-      alert('Added to cart successfully!');
+      Swal.fire({
+        title: 'Success!',
+        text: 'Added to cart successfully!',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#10b981'
+      });
     } catch (error) {
       console.error('Error adding to cart:', error);
-      alert('Failed to add item to cart. Please try again.');
+      Swal.fire({
+        title: 'Error!',
+        text: 'Failed to add item to cart. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#ef4444'
+      });
     } finally {
       setIsAddingToCart(false);
     }
